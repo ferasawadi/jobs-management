@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "job.type.values",
+      "type": "java.lang.String",
+      "description": "Description for job.type.values."
+  }
+] }
