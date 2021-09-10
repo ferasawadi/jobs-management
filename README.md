@@ -7,8 +7,13 @@ in this document, you will have a technical overview of how to use the system.<b
 
 * [Important](#important)
 * [Overview](#overview)
-* [How To Use](#HowTo)
-* [Notes](#important)
+* [How To Build](#how-to-build)
+* [How To Use](#how-to-use)
+* [Usage](#usage)
+* [API](#api)
+* [End Points](#endpoints)
+* [Testing](#testing)
+* [Copyrights](#copyrights)
 
 ## important
 
@@ -79,7 +84,7 @@ java -jar JobManagement-1.0.101.jar
 
 > note: please check the logs they have enough information about what is happening in the system
 
-## HowTo
+## how to use
 
 * the system api is quit simple and straight forward<br/>
   we have an interface that represents the entry point for the entire System, it's Called `Job`</br>
@@ -316,6 +321,7 @@ http://localhost:30000/api/v1/job
 ```
 
 ### Testing
+
 * the system is already have a Testing REST Interface.
 * there is a unit test in the test package that can be used.
 
@@ -328,9 +334,12 @@ http://localhost:30000/api/v1/job
 | http://localhost:30000/api/v1/job?id=1aa749aa-4171-4798-b3c2-5f36c008e95b | cancel a task         | DELETE                |
 | http://localhost:30000/api/v1/job/query?execution_type=EXECUTE            | search for data       | GET                   |
 | http://localhost:30000/api/v1/job                                         | load all tasks        | GET                   |
+
 <sup>1</sup>
 
 2. unit test is available at the test package that contains tests for the system methods.
+
+### copyrights
 
 <footer>
 <p style="float:left; width: 20%;">
