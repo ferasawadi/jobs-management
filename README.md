@@ -141,7 +141,7 @@ public interface EmailRepo extends BaseJobRepo<EmailJob, UUID> {
  @Bean
 public JobService<EmailJob, UUID> jobService(EmailRepo emailRepo){
         return new JobService<>(emailRepo);
-        }
+}
 ```
 
 > using this bean will initialize the system and pass the entity along with its repository to it.
