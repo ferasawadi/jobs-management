@@ -5,17 +5,12 @@ import com.payoneer.JobManagement.api.response.ApiResponse;
 import com.payoneer.JobManagement.api.enums.ApiResponseCodes;
 import com.payoneer.JobManagement.api.response.ErrorResponse;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.ParsePosition;
-import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAccessor;
-import java.util.Date;
 import java.util.UUID;
 
 /**

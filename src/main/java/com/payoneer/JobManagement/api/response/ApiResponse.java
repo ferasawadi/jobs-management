@@ -34,7 +34,7 @@ public final class ApiResponse<T, R> {
      *
      * @see ApiResponseCodes
      */
-    private final String code;
+        private final String code;
     /**
      * response message
      */

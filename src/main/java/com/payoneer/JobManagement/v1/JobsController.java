@@ -45,7 +45,7 @@ public class JobsController {
 
     @PostMapping
     @Async
-    public CompletableFuture<ApiResponse<EmailJob, ErrorResponse>> createJob(@RequestBody CreateEmailJobRequest createEmailJobRequest) {
+    public CompletableFuture<ApiResponse<EmailJob, ErrorResponse>> create(@RequestBody CreateEmailJobRequest createEmailJobRequest) {
         LOGGER.info(" [.] calling Email Job Create Service: {} ", createEmailJobRequest);
 
 

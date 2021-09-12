@@ -1,19 +1,21 @@
 # Payoneer Jobs Management System
+![alt text](imgs/logo.png)
 
 Welcome to Payoneer Jobs Management System.<br/>
 in this document, you will have a technical overview of how to use the system.<br/>
 
 ## Content of Document
 
-* [Important](#important)
-* [Overview](#overview)
-* [How To Build](#how-to-build)
-* [How To Use](#how-to-use)
-* [Usage](#usage)
-* [API](#api)
-* [End Points](#endpoints)
-* [Testing](#testing)
-* [Copyrights](#copyrights)
+1. [Important](#important)
+2. [Overview](#overview)
+3. [How To Build](#how-to-build)
+4. [How To Use](#how-to-use)
+5. [Usage](#usage)
+6. [API](#api)
+7. [End Points](#endpoints)
+8. [Testing](#testing)
+9. [UML Design](#uml-design)
+10. [Copyrights](#copyrights)
 
 ## important
 
@@ -126,7 +128,7 @@ public interface EmailRepo extends BaseJobRepo<EmailJob, UUID> {
  @Bean
 public JobService<EmailJob, UUID> jobService(EmailRepo emailRepo){
         return new JobService<>(emailRepo);
-        }
+}
 ```
 
 > using this bean will initialize the system and pass the entity along with its repository to it.
@@ -181,7 +183,7 @@ var emailJob=new EmailJob(
         );
 
 // execute it using:
-        jobService.createJob(emailJob,executionType)
+jobService.createJob(emailJob,executionType)
 
 ```
 
@@ -215,7 +217,7 @@ json snippet:
          executionType
          );
 // execute it
-         jobService.createJob(emailJob,scheduleTaskReq.getWhen()).scheduleJob(executionType)
+jobService.createJob(emailJob,scheduleTaskReq.getWhen()).scheduleJob(executionType)
 ```
 
 > please note to have a valid scheduled task a proper date should be passed of pattern: 2021-09-10T14:30:00
@@ -339,6 +341,8 @@ http://localhost:30000/api/v1/job
 
 2. unit test is available at the test package that contains tests for the system methods.
 
+### UML Design 
+![UML Image ](imgs/uml.png)
 ### copyrights
 
 <footer>
