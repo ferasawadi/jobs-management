@@ -1,4 +1,5 @@
 # Payoneer Jobs Management System
+
 ![alt text](imgs/logo.png)
 
 Welcome to Payoneer Jobs Management System.<br/>
@@ -13,9 +14,10 @@ in this document, you will have a technical overview of how to use the system.<b
 5. [Usage](#usage)
 6. [API](#api)
 7. [End Points](#endpoints)
-8. [Testing](#testing)
-9. [UML Design](#uml-design)
-10. [Copyrights](#copyrights)
+8. [Error Handling](#error-handling)
+9. [Testing](#testing)
+10. [UML Design](#uml-design)
+11. [Copyrights](#copyrights)
 
 ## important
 
@@ -43,7 +45,12 @@ or they are queued for future execution.<br/>
 Payoneer's management system is using Java 16, Spring Boot, Hibernate, Spring JPA, Docker, and H2 Database in its
 core.<br/>
 Payoneer's management system was design to be highly compatible with any Client (Mobile, Web) while its using RESTFul
-Interface to interact with the outer world.
+Interface to interact with the outer world.<br/>
+Payoneer's management system is flexible and upgradable beacuse it uses java interfaces and high level support to add
+new features and components<br/>
+is just like there is a new fature coming in, extends the old interface and boom.<br/>
+Payoneer's management systemis built to be a non-blocking Code, using Functional programming in its core. Async RESTFul
+APIs is what this system is all about
 
 ## how to build
 
@@ -89,17 +96,23 @@ java -jar JobManagement-1.0.101.jar
 ## how to use
 
 * the system api is quit simple and straight forward<br/>
-  we have an interface that represents the entry point for the entire System, it's Called `Job`</br>
+  we have an interface that represents the entry point for the entire System, it's
+  Called[Job](src/main/java/com/payoneer/JobManagement/system/Job.java) <br/>
   before digging in with getting our hands dirty let's first take a look of few thing that are required<br/>
     * the system is built on top of Spring boot we need to define `beans` to use them in our controllers.
 
-    * all of our entity classes must extend the [JobBaseEntity](src/main/java/com/payoneer/JobManagement/domain/entities/BaseJobEntity.java) class to be valid to us in our system
-    * our entity repository must extend the [BaseJobRepo](src/main/java/com/payoneer/JobManagement/domain/repos/BaseJobRepo.java) to be valid.
+    * all of our entity classes must extend
+      the [JobBaseEntity](src/main/java/com/payoneer/JobManagement/domain/entities/BaseJobEntity.java) class to be valid
+      to us in our system
+    * our entity repository must extend
+      the [BaseJobRepo](src/main/java/com/payoneer/JobManagement/domain/repos/BaseJobRepo.java) to be valid.
 
 * now we are ready let's jump in<br/>
   __we will start by creating an Entity for our Job__
 
-1. to create a job, create a simple class that extends  [JobBaseEntity](src/main/java/com/payoneer/JobManagement/domain/entities/BaseJobEntity.java) like the following
+1. to create a job, create a simple class that
+   extends  [JobBaseEntity](src/main/java/com/payoneer/JobManagement/domain/entities/BaseJobEntity.java) like the
+   following
 
 ```java
 
@@ -128,7 +141,7 @@ public interface EmailRepo extends BaseJobRepo<EmailJob, UUID> {
  @Bean
 public JobService<EmailJob, UUID> jobService(EmailRepo emailRepo){
         return new JobService<>(emailRepo);
-}
+        }
 ```
 
 > using this bean will initialize the system and pass the entity along with its repository to it.
@@ -168,11 +181,13 @@ the system contains useful methods that can be chained to perform a task, either
 queued.<br/>
 its quit simple as we will go through that in a sec.<br/>
 
-1. to create and process a simple task you just need to call  [createJob(emailJob,executionType, jobPriority)](src/main/java/com/payoneer/JobManagement/system/JobService.java#L133-L144) and boom.
+1. to create and process a simple task you just need to
+   call  [createJob(emailJob,executionType, jobPriority)](src/main/java/com/payoneer/JobManagement/system/JobService.java#L133-L147)
+   and boom.
 
 ```java
  // create an object and pass it to the system
-var emailJob = new EmailJob(
+var emailJob=new EmailJob(
         UUID.randomUUID(),
         Instant.now(),
         createEmailJobRequest.getEmailJob().getTo(),
@@ -183,7 +198,7 @@ var emailJob = new EmailJob(
         jobPriority
         );
 // execute it using:
-jobService.createJob(emailJob,executionType, jobPriority)
+        jobService.createJob(emailJob,executionType,jobPriority)
 
 ```
 
@@ -204,11 +219,14 @@ json snippet:
 }
 ``` 
 
-2. to schedule a task please use the following method  [createJob(emailJob, LocalDateTime, jobPriority)](src/main/java/com/payoneer/JobManagement/system/JobService.java)
+2. to schedule a task please use the following
+   method  [createJob(emailJob, LocalDateTime, jobPriority)](src/main/java/com/payoneer/JobManagement/system/JobService.java#L184-L221)
+   <br/> please note that the method in here is chained in the order createJob() then schedule mess with the order will
+   lead the system to fail and throw error
 
 ```java
   // create a job object
- var emailJob = new EmailJob(
+ var emailJob=new EmailJob(
          UUID.randomUUID(),
          Instant.now(),
          scheduleTaskReq.getEmailJob().getTo(),
@@ -219,7 +237,7 @@ json snippet:
          jobPriority
          );
 // execute it
-jobService.createJob(emailJob,scheduleTaskReq.getWhen(), jobPriority).scheduleJob(executionType)
+         jobService.createJob(emailJob,scheduleTaskReq.getWhen(),jobPriority).scheduleJob(executionType)
 ```
 
 > please note to have a valid scheduled task a proper date should be passed of pattern: 2021-09-10T14:30:00
@@ -241,7 +259,8 @@ a json snippet
 ```
 
 3. cancel a job<br/>
-   job can be canceled easily by calling the `cancelJob(id)` method. check it here [cancelJon(ID id)](src/main/java/com/payoneer/JobManagement/system/Job.java#L50-L61)
+   job can be canceled easily by calling the `cancelJob(id)` method. check it
+   here [cancelJon(ID id)](src/main/java/com/payoneer/JobManagement/system/Job.java#L50-L61)
 
 ```java
 jobService.cancelJob(UUID.fromString(uuid))
@@ -252,9 +271,12 @@ jobService.cancelJob(UUID.fromString(uuid))
 the system already have a Utils Class that have useful methods to help with this obviously<br/>
 > please see [ApiUtils](src/main/java/com/payoneer/JobManagement/api/utils/ApiUtils.java) for more info
 
-to validate the id you can call the method [validUUID(uuid)](src/main/java/com/payoneer/JobManagement/api/utils/ApiUtils.java#L70-L76) passing the id to it to check if It''s valid or not.
+to validate the id you can call the
+method [validUUID(uuid)](src/main/java/com/payoneer/JobManagement/api/utils/ApiUtils.java#L70-L83) passing the id to it
+to check if It''s valid or not.
 
->  [JobExecutionType](src/main/java/com/payoneer/JobManagement/api/enums/JobExecutionType.java) and [JobPriority](src/main/java/com/payoneer/JobManagement/api/enums/JobPriority.java) are enum classes that contains at least one layer of usage (minimum). please refer to them for more info 
+> [JobExecutionType](src/main/java/com/payoneer/JobManagement/api/enums/JobExecutionType.java) and [JobPriority](src/main/java/com/payoneer/JobManagement/api/enums/JobPriority.java) are enum classes that contains at least one layer of usage (minimum). please refer to them for more info
+
 ### API
 
 the schema of the API is simple and providing a generic shape that can be used to help front end programmers to perform
@@ -326,6 +348,19 @@ for example:
 http://localhost:30000/api/v1/job
 ```
 
+### error handling
+
+the system is trying its best to deal with all edge cases and unkown user behaviour, by response back with error codes
+to the client instaed of throwing API Error codes <br/>
+`4xx` and `5xx`, keep in mind is some cases the systes must fail to protect the data and the warehouse.<br/>
+in this case the system is logging all the things that happens, please refer to the logs to have an idea about the error
+codes that appears.<br/>
+
+**  the idea behind throwing errors **<br/>
+
+1. is that the system will print the error but will continue to function normally.
+2. otherwise, normal errors will be returned to the cliend as API responses.
+
 ### Testing
 
 * the system is already have a Testing REST Interface.
@@ -345,8 +380,10 @@ http://localhost:30000/api/v1/job
 
 2. unit test is available at the test package that contains tests for the system methods.
 
-### UML Design 
+### UML Design
+
 ![UML Image ](imgs/uml.png)
+
 ### copyrights
 
 <footer>
