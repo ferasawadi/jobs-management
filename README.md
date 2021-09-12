@@ -44,12 +44,12 @@ execution<br/>
 or they are queued for future execution.<br/>
 Payoneer's management system is using Java 16, Spring Boot, Hibernate, Spring JPA, Docker, and H2 Database in its
 core.<br/>
-Payoneer's management system was design to be highly compatible with any Client (Mobile, Web) while its using RESTFul
+Payoneer's management system was designed to be highly compatible with any Client (Mobile, Web) while it's using RESTFul
 Interface to interact with the outer world.<br/>
-Payoneer's management system is flexible and upgradable beacuse it uses java interfaces and high level support to add
+Payoneer's management system is flexible and upgradable because it uses java interfaces and high-level support to add
 new features and components<br/>
-is just like there is a new fature coming in, extends the old interface and boom.<br/>
-Payoneer's management systemis built to be a non-blocking Code, using Functional programming in its core. Async RESTFul
+is just like there is a new feature coming in, extends the old interface, and boom.<br/>
+Payoneer's management system is built to be a non-blocking Code, using Functional programming at its core. Async RESTFul
 APIs is what this system is all about
 
 ## how to build
@@ -95,10 +95,10 @@ java -jar JobManagement-1.0.101.jar
 
 ## how to use
 
-* the system api is quit simple and straight forward<br/>
-  we have an interface that represents the entry point for the entire System, it's
+* the system API is quit simple and straightforward <br/>
+  we have an interface that represents the entry point for the entire system, it's
   Called[Job](src/main/java/com/payoneer/JobManagement/system/Job.java) <br/>
-  before digging in with getting our hands dirty let's first take a look of few thing that are required<br/>
+  before digging in with getting our hands dirty let's first take a look at a few things that are required<br/>
     * the system is built on top of Spring boot we need to define `beans` to use them in our controllers.
 
     * all of our entity classes must extend
@@ -155,7 +155,7 @@ system has a RESTFul Interface.<br/>
 
 ### creating the controller
 
-simple Spring boot Controller is what we are doing in here.
+A simple Spring boot Controller is what we are doing here.
 
 ```java
 
@@ -179,7 +179,7 @@ you will have now access using the [JobService](src/main/java/com/payoneer/JobMa
 
 the system contains useful methods that can be chained to perform a task, either the job should be executed directly or
 queued.<br/>
-its quit simple as we will go through that in a sec.<br/>
+its quite simple as we will go through that in a sec.<br/>
 
 1. to create and process a simple task you just need to
    call  [createJob(emailJob,executionType, jobPriority)](src/main/java/com/payoneer/JobManagement/system/JobService.java#L133-L147)
@@ -202,7 +202,7 @@ var emailJob=new EmailJob(
 
 ```
 
-> please note that `createEmailJobRequest` is a POJO Class that is used by the rest endpoint to pass json object to the system
+> please note that `createEmailJobRequest` is a POJO class that is used by the rest endpoint to pass JSON objects to the system
 
 json snippet:
 
@@ -268,7 +268,7 @@ jobService.cancelJob(UUID.fromString(uuid))
 
 > please note that to have a valid operation a valid UUID must be passed.
 
-the system already have a Utils Class that have useful methods to help with this obviously<br/>
+the system already has a Utils Class that have useful methods to help with this obviously<br/>
 > please see [ApiUtils](src/main/java/com/payoneer/JobManagement/api/utils/ApiUtils.java) for more info
 
 to validate the id you can call the
@@ -279,9 +279,9 @@ to check if It''s valid or not.
 
 ### API
 
-the schema of the API is simple and providing a generic shape that can be used to help front end programmers to perform
+the schema of the API is simple and providing a generic shape that can be used to help front end programmers perform
 the tasks faster by having one wrapper to the json<br/>
-in fact what changing in here is the body of the results object, to make this clear let's take a look on some samples.
+in fact what changing here is the body of the results object, to make this clear let's take a look at some samples.
 
 ```swagger codegen
 {
@@ -304,8 +304,7 @@ in fact what changing in here is the body of the results object, to make this cl
 
 ```
 
-as you can see the results object is what changing in here each time it has new data depending on what nd point you are
-calling.
+as you can see the results object is what changing here each time it has new data depending on what endpoint you are calling.
 
 ```swagger codegen
 {
@@ -320,10 +319,10 @@ calling.
 }
 ```
 
-in here we have an error object while the results has a null value.
+here we have an error object while the results have a null value.
 > please note that `status`, `code`, `message` `results` `errors` are always there in the response
 
-the error object have a fixed shape
+the error object has a fixed shape
 
 ```swagger codegen
  "errors": {
@@ -350,20 +349,20 @@ http://localhost:30000/api/v1/job
 
 ### error handling
 
-the system is trying its best to deal with all edge cases and unkown user behaviour, by response back with error codes
-to the client instaed of throwing API Error codes <br/>
-`4xx` and `5xx`, keep in mind is some cases the systes must fail to protect the data and the warehouse.<br/>
-in this case the system is logging all the things that happens, please refer to the logs to have an idea about the error
-codes that appears.<br/>
+the system is trying its best to deal with all edge cases and unknown user behavior, by responding back with error codes
+to the client instead of throwing API Error codes <br/>
+`4xx` and `5xx`, keep in mind in some cases the system must fail to protect the data and the warehouse.<br/>
+in this case, the system is logging all the things that happen, please refer to the logs to have an idea about the error
+codes that appear.<br/>
 
-**  the idea behind throwing errors **<br/>
+**  The idea behind throwing errors **<br/>
 
 1. is that the system will print the error but will continue to function normally.
-2. otherwise, normal errors will be returned to the cliend as API responses.
+2. otherwise, normal errors will be returned to the client as API responses.
 
 ### Testing
 
-* the system is already have a Testing REST Interface.
+* the system is already has a Testing REST Interface.
 * there is a unit test in the test package that can be used.
 
 1. the current system is equipped with the following testing endpoints
@@ -375,8 +374,6 @@ codes that appears.<br/>
 | http://localhost:30000/api/v1/job?id=1aa749aa-4171-4798-b3c2-5f36c008e95b | cancel a task         | DELETE                |
 | http://localhost:30000/api/v1/job/query?execution_type=EXECUTE            | search for data       | GET                   |
 | http://localhost:30000/api/v1/job                                         | load all tasks        | GET                   |
-
-<sup>1</sup>
 
 2. unit test is available at the test package that contains tests for the system methods.
 
