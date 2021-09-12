@@ -2,6 +2,7 @@ package com.payoneer.JobManagement.v1;
 
 import com.payoneer.JobManagement.api.enums.ApiResponseCodes;
 import com.payoneer.JobManagement.api.enums.JobExecutionType;
+import com.payoneer.JobManagement.api.enums.JobPriority;
 import com.payoneer.JobManagement.api.request.CreateEmailJobRequest;
 import com.payoneer.JobManagement.api.request.ScheduleTaskReq;
 import com.payoneer.JobManagement.api.response.ApiResponse;
@@ -52,9 +53,22 @@ public class JobsController {
         // mapping the execution type in case of failure.
         JobExecutionType executionType;
         try {
-            executionType = JobExecutionType.valueOf(createEmailJobRequest.getExecutionType());
+            executionType = JobExecutionType.valueOf(createEmailJobRequest.getExecutionType().toUpperCase(Locale.ROOT));
         } catch (Exception e) {
+            ///todo or tell the user that the type is unresolvable
+
+            // fallback
             executionType = JobExecutionType.EXECUTE;
+        }
+        // job priority
+        JobPriority jobPriority ;
+        try {
+            jobPriority = JobPriority.valueOf(createEmailJobRequest.getJobPriority().toUpperCase(Locale.ROOT));
+        } catch (Exception e){
+            ///todo or tell the user that the type is unresolvable
+
+            // fallback
+            jobPriority = JobPriority.MEDIUM;
         }
         // UUID id, Instant created, String to, String subject, String name, String content
         var emailJob = new EmailJob(
@@ -64,11 +78,12 @@ public class JobsController {
                 createEmailJobRequest.getEmailJob().getSubject(),
                 createEmailJobRequest.getEmailJob().getName(),
                 createEmailJobRequest.getEmailJob().getContent(),
-                executionType
+                executionType,
+                jobPriority
         );
 
         return CompletableFuture.completedFuture(
-                jobService.createJob(emailJob, executionType)
+                jobService.createJob(emailJob, executionType, jobPriority)
         );
     }
 
@@ -82,22 +97,36 @@ public class JobsController {
         // mapping the execution type in case of failure.
         JobExecutionType executionType;
         try {
-            executionType = JobExecutionType.valueOf(scheduleTaskReq.getExecutionType());
+            executionType = JobExecutionType.valueOf(scheduleTaskReq.getExecutionType().toUpperCase(Locale.ROOT));
         } catch (Exception e) {
+            ///todo or tell the user that the type is unresolvable
+
+            // fallback
             executionType = JobExecutionType.EXECUTE;
         }
+        // job priority
+        JobPriority jobPriority ;
+        try {
+            jobPriority = JobPriority.valueOf(scheduleTaskReq.getJobPriority().toUpperCase(Locale.ROOT));
+        } catch (Exception e){
+            ///todo or tell the user that the type is unresolvable
 
-        EmailJob emailJob = new EmailJob(
+            // fallback
+            jobPriority = JobPriority.MEDIUM;
+        }
+
+        var emailJob = new EmailJob(
                 UUID.randomUUID(),
                 Instant.now(),
                 scheduleTaskReq.getEmailJob().getTo(),
                 scheduleTaskReq.getEmailJob().getSubject(),
                 scheduleTaskReq.getEmailJob().getName(),
                 scheduleTaskReq.getEmailJob().getContent(),
-                executionType
+                executionType,
+                jobPriority
         );
         return CompletableFuture.completedFuture(
-                jobService.createJob(emailJob, scheduleTaskReq.getWhen()).scheduleJob(executionType)
+                jobService.createJob(emailJob, scheduleTaskReq.getWhen()).scheduleJob(executionType, jobPriority)
         );
     }
 
@@ -135,7 +164,7 @@ public class JobsController {
         ///todo for now we are matching only the values in the ENUM CLASS but the system must be extended to even check new types
         //  by getting them from the properties file or a warehouse.
 
-        LOGGER.info("[.] query data for: {}", executionType);
+        LOGGER.info("[.] query data for: {}", executionType.toUpperCase(Locale.ROOT));
         // mapping the execution type in case of failure.
         JobExecutionType type;
         try {

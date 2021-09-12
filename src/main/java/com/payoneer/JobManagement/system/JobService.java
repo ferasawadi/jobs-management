@@ -1,5 +1,6 @@
 package com.payoneer.JobManagement.system;
 
+import com.payoneer.JobManagement.api.enums.JobPriority;
 import com.payoneer.JobManagement.api.response.ApiResponse;
 import com.payoneer.JobManagement.api.enums.ApiResponseCodes;
 import com.payoneer.JobManagement.api.enums.JobExecutionType;
@@ -136,12 +137,13 @@ public class JobService<T extends BaseJobEntity, ID extends Serializable> implem
      * @param job           the job to be executed
      * @param executionType the execution type.
      * @return API Response.
+     * @param jobPriority its priority
      * @see #createJob(BaseJobEntity, LocalDateTime)
      */
     @Override
-    public ApiResponse<T, ErrorResponse> createJob(T job, JobExecutionType executionType) {
+    public ApiResponse<T, ErrorResponse> createJob(T job, JobExecutionType executionType, JobPriority jobPriority) {
         // returned response.
-        return processJob(job, executionType);
+        return processJob(job, executionType, jobPriority);
     }
 
     /**
@@ -189,10 +191,11 @@ public class JobService<T extends BaseJobEntity, ID extends Serializable> implem
      *
      * @param executionType the execution type.
      * @return API Response.
+     * @param jobPriority its priority
      * @see JobExecutionType from more info about execution types.
      */
     @Override
-    public ApiResponse<T, ErrorResponse> scheduleJob(JobExecutionType executionType) {
+    public ApiResponse<T, ErrorResponse> scheduleJob(JobExecutionType executionType, JobPriority jobPriority) {
         if (job == null)
             return ApiUtils.errorResponse(false, JOB_SCHEDULE_FAILED, ApiResponseCodes.FAIL.name(),
                     new ErrorResponse("job can't be scheduled because the job is null", ApiResponseCodes.FAIL.name()));
@@ -207,7 +210,7 @@ public class JobService<T extends BaseJobEntity, ID extends Serializable> implem
 
         LOGGER.info(" [*] when date: {}", when);
         // submit to process
-        processJob(job, executionType);
+        processJob(job, executionType, jobPriority);
         // schedule it :)
         futureTask.schedule(() -> {
             LOGGER.info(" [.] Start To Execute Scheduled task, {} at: {}", job, when);
@@ -265,7 +268,7 @@ public class JobService<T extends BaseJobEntity, ID extends Serializable> implem
      * @param executionType the execution type
      * @return API response.
      */
-    private ApiResponse<T, ErrorResponse> processJob(T job, JobExecutionType executionType) {
+    private ApiResponse<T, ErrorResponse> processJob(T job, JobExecutionType executionType, JobPriority jobPriority) {
         ApiResponse<T, ErrorResponse> response;
         // extract execution type from the list.
         // base case is the value sent via JobExecution Type is not valid at all
@@ -283,8 +286,9 @@ public class JobService<T extends BaseJobEntity, ID extends Serializable> implem
                     new ErrorResponse("execution type can't be null, please make sure to send a valid one see: JobExecutionType from more info ", ApiResponseCodes.FAIL.name()));
         }
 
+        // another fallback check.
         JobExecutionType jobExecutionType = availableJobExecutionTypes.getOrDefault(executionType.name(), JobExecutionType.EXECUTE);
-
+        LOGGER.info(" [.] Job Priority: {} ", jobPriority.name());
         switch (jobExecutionType.name().toUpperCase(Locale.ROOT)) {
             case "EXECUTE" -> {
                 LOGGER.info(" [.] Execute a Job: {}", job);
@@ -299,8 +303,18 @@ public class JobService<T extends BaseJobEntity, ID extends Serializable> implem
                 saveToWareHouse(job);
                 // build the response
                 response = ApiUtils.success(true, JOB_CREATED, ApiResponseCodes.SUCCESS.name(), job);
-                // using offer to add to the queue.
-                tasks.offer(job);
+
+                // check its priority
+                if (jobPriority.equals(JobPriority.HIGH)){
+                    // using offer to add to the queue.
+                    tasks.offer(job);
+                } else if (jobPriority.equals(JobPriority.MEDIUM)){
+                    // using offer to add to the queue.
+                    tasks.offer(job);
+                } else {
+                    // using offer to add to the queue.
+                    tasks.offer(job);
+                }
             }
             default -> {
                 LOGGER.info(" [x] error execute the task, Execution Type: {}  is not Supported", jobExecutionType.name());

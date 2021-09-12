@@ -6,6 +6,7 @@ public class ScheduleTaskReq {
     private LocalDateTime when;
     private EmailReq emailJob;
     private String executionType;
+    private String jobPriority;
 
 
     public LocalDateTime getWhen() {
@@ -32,12 +33,21 @@ public class ScheduleTaskReq {
         this.executionType = executionType;
     }
 
+    public String getJobPriority() {
+        return jobPriority;
+    }
+
+    public void setJobPriority(String jobPriority) {
+        this.jobPriority = jobPriority;
+    }
+
     @Override
     public String toString() {
         return "ScheduleTaskReq{" +
-                "when='" + when + '\'' +
-                ", emailReq=" + emailJob +
+                "when=" + when +
+                ", emailJob=" + emailJob +
                 ", executionType='" + executionType + '\'' +
+                ", jobPriority='" + jobPriority + '\'' +
                 '}';
     }
 }

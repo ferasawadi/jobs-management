@@ -1,5 +1,6 @@
 package com.payoneer.JobManagement.system;
 
+import com.payoneer.JobManagement.api.enums.JobPriority;
 import com.payoneer.JobManagement.api.response.ApiResponse;
 import com.payoneer.JobManagement.api.enums.JobExecutionType;
 import com.payoneer.JobManagement.api.response.ErrorResponse;
@@ -29,9 +30,10 @@ public interface Job<T extends BaseJobEntity, ID extends Serializable> {
      *
      * @param job           the job to be executed
      * @param executionType the execution type.
+     * @param jobPriority its priority
      * @return API Response.
      */
-    ApiResponse<T, ErrorResponse> createJob(T job, JobExecutionType executionType);
+    ApiResponse<T, ErrorResponse> createJob(T job, JobExecutionType executionType, JobPriority jobPriority);
 
     /**
      * method to execute a job and can be chained with  other methods to perform the task.
@@ -53,9 +55,10 @@ public interface Job<T extends BaseJobEntity, ID extends Serializable> {
      *
      * @param executionType the execution type.
      * @return API Response.
+     * @param jobPriority its priority
      * @see JobExecutionType from more info about execution types.
      */
-    ApiResponse<T, ErrorResponse> scheduleJob(JobExecutionType executionType);
+    ApiResponse<T, ErrorResponse> scheduleJob(JobExecutionType executionType, JobPriority jobPriority);
 
     /**
      * job that already have been submitted to the queue. can be canceled.

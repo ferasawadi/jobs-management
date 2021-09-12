@@ -1,6 +1,7 @@
 package com.payoneer.JobManagement.v1;
 
 import com.payoneer.JobManagement.api.enums.JobExecutionType;
+import com.payoneer.JobManagement.api.enums.JobPriority;
 import com.payoneer.JobManagement.domain.entities.BaseJobEntity;
 
 import javax.persistence.*;
@@ -17,19 +18,31 @@ public class EmailJob extends BaseJobEntity {
     @Enumerated(EnumType.STRING)
     @Column(name = "execution_type")
     private JobExecutionType executionType;
-//    private Collection<String> ccs;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "job_priority")
+    private JobPriority jobPriority;
 
     public EmailJob() {
 
     }
 
-    public EmailJob(UUID id, Instant created, String to, String subject, String name, String content, JobExecutionType executionType) {
+    public EmailJob(UUID id, Instant created, String to, String subject, String name, String content, JobExecutionType executionType, JobPriority jobPriority) {
         super(id, created);
         this.to = to;
         this.name = name;
         this.content = content;
         this.subject = subject;
         this.executionType = executionType;
+        this.jobPriority = jobPriority;
+    }
+
+
+    public JobPriority getJobPriority() {
+        return jobPriority;
+    }
+
+    public void setJobPriority(JobPriority jobPriority) {
+        this.jobPriority = jobPriority;
     }
 
     public JobExecutionType getExecutionType() {

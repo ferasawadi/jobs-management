@@ -1,5 +1,6 @@
 package com.payoneer.JobManagement;
 
+import com.payoneer.JobManagement.api.enums.JobPriority;
 import com.payoneer.JobManagement.api.response.ApiResponse;
 import com.payoneer.JobManagement.api.enums.JobExecutionType;
 import com.payoneer.JobManagement.api.response.ErrorResponse;
@@ -50,15 +51,16 @@ public class JobServiceTesting {
                 "Email Job Test",
                 "Feras Alawadi",
                 "this is email Job to be Executed...",
-                JobExecutionType.EXECUTE
+                JobExecutionType.EXECUTE,
+                JobPriority.MEDIUM
         );
 
         // save to warehouse for future reference.
 //        emailRepo.save(emailJob);
 
-        ApiResponse<EmailJob, ErrorResponse> response = jobService.createJob(emailJob, JobExecutionType.EXECUTE);
-        ApiResponse<EmailJob, ErrorResponse> response1 = jobService.createJob(emailJob, JobExecutionType.QUEUED);
-        ApiResponse<EmailJob, ErrorResponse> response2 = jobService.createJob(emailJob, JobExecutionType.UNKNOWN);
+        ApiResponse<EmailJob, ErrorResponse> response = jobService.createJob(emailJob, JobExecutionType.EXECUTE, JobPriority.MEDIUM);
+        ApiResponse<EmailJob, ErrorResponse> response1 = jobService.createJob(emailJob, JobExecutionType.QUEUED,  JobPriority.MEDIUM);
+        ApiResponse<EmailJob, ErrorResponse> response2 = jobService.createJob(emailJob, JobExecutionType.UNKNOWN,  JobPriority.MEDIUM);
 
         LOGGER.info(" [.] Testing results1: {}", response);
         LOGGER.info(" [.] Testing results2: {}", response1);
@@ -75,9 +77,9 @@ public class JobServiceTesting {
                 "body to print"
         );
 
-        ApiResponse<PrintingEntity, ErrorResponse> response = printingService.createJob(printingEntity, JobExecutionType.EXECUTE);
-        ApiResponse<PrintingEntity, ErrorResponse> response1 = printingService.createJob(printingEntity, JobExecutionType.QUEUED);
-        ApiResponse<PrintingEntity, ErrorResponse> response2 = printingService.createJob(printingEntity, JobExecutionType.UNKNOWN);
+        ApiResponse<PrintingEntity, ErrorResponse> response = printingService.createJob(printingEntity, JobExecutionType.EXECUTE,  JobPriority.MEDIUM);
+        ApiResponse<PrintingEntity, ErrorResponse> response1 = printingService.createJob(printingEntity, JobExecutionType.QUEUED,  JobPriority.MEDIUM);
+        ApiResponse<PrintingEntity, ErrorResponse> response2 = printingService.createJob(printingEntity, JobExecutionType.UNKNOWN,  JobPriority.MEDIUM);
 
         LOGGER.info(" [.] Testing Results1: {}", response);
         LOGGER.info(" [.] Testing Results2: {}", response1);

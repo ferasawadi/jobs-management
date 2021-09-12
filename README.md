@@ -93,13 +93,13 @@ java -jar JobManagement-1.0.101.jar
   before digging in with getting our hands dirty let's first take a look of few thing that are required<br/>
     * the system is built on top of Spring boot we need to define `beans` to use them in our controllers.
 
-    * all of our entity classes must extend the `JobBaseEntity` class to be valid to us in our system
-    * our entity repository must extend the `JobBaseRepo` to be valid.
+    * all of our entity classes must extend the [JobBaseEntity](src/main/java/com/payoneer/JobManagement/domain/entities/BaseJobEntity.java) class to be valid to us in our system
+    * our entity repository must extend the [BaseJobRepo](src/main/java/com/payoneer/JobManagement/domain/repos/BaseJobRepo.java) to be valid.
 
 * now we are ready let's jump in<br/>
   __we will start by creating an Entity for our Job__
 
-1. to create a job, create a simple class that extends `JobBaseEntity` like the following
+1. to create a job, create a simple class that extends  [JobBaseEntity](src/main/java/com/payoneer/JobManagement/domain/entities/BaseJobEntity.java) like the following
 
 ```java
 
@@ -160,7 +160,7 @@ private final Job<EmailJob, UUID> jobService;
 private final EmailRepo emailRepo;
 ```
 
-you will have now access using the `jobService` object.
+you will have now access using the [JobService](src/main/java/com/payoneer/JobManagement/system/JobService.java).
 
 ### usage
 
@@ -168,22 +168,22 @@ the system contains useful methods that can be chained to perform a task, either
 queued.<br/>
 its quit simple as we will go through that in a sec.<br/>
 
-1. to create and process a simple task you just need to call `createJob(job,executionType)` and boom.
+1. to create and process a simple task you just need to call  [createJob(emailJob,executionType, jobPriority)](src/main/java/com/payoneer/JobManagement/system/JobService.java#L133-L144) and boom.
 
 ```java
  // create an object and pass it to the system
-var emailJob=new EmailJob(
+var emailJob = new EmailJob(
         UUID.randomUUID(),
         Instant.now(),
         createEmailJobRequest.getEmailJob().getTo(),
         createEmailJobRequest.getEmailJob().getSubject(),
         createEmailJobRequest.getEmailJob().getName(),
         createEmailJobRequest.getEmailJob().getContent(),
-        executionType
+        executionType,
+        jobPriority
         );
-
 // execute it using:
-jobService.createJob(emailJob,executionType)
+jobService.createJob(emailJob,executionType, jobPriority)
 
 ```
 
@@ -194,30 +194,32 @@ json snippet:
 ```swagger codegen
 {
     "emailJob": {
-          "to": "ferasawady@gmail.com",
-          "subject": "email job",
-          "name": "Feras Alawadi",
-          "content": "hello this is just a demo of Payoneer Germany Job Management System."
+        "to": "ferasawady@gmail.com",
+        "subject": "email job",
+        "name": "Feras Alawadi",
+        "content": "hello this is just a demo of Payoneer Germany Job Management System."
     },
-    "e*xecutionType": "execute"
+    "executionType": "execute",
+    "jobPriority": "high"
 }
 ``` 
 
-2. to schedule a task please use the following:
+2. to schedule a task please use the following method  [createJob(emailJob, LocalDateTime, jobPriority)](src/main/java/com/payoneer/JobManagement/system/JobService.java)
 
 ```java
   // create a job object
- EmailJob emailJob=new EmailJob(
+ var emailJob = new EmailJob(
          UUID.randomUUID(),
          Instant.now(),
          scheduleTaskReq.getEmailJob().getTo(),
          scheduleTaskReq.getEmailJob().getSubject(),
          scheduleTaskReq.getEmailJob().getName(),
          scheduleTaskReq.getEmailJob().getContent(),
-         executionType
+         executionType,
+         jobPriority
          );
 // execute it
-jobService.createJob(emailJob,scheduleTaskReq.getWhen()).scheduleJob(executionType)
+jobService.createJob(emailJob,scheduleTaskReq.getWhen(), jobPriority).scheduleJob(executionType)
 ```
 
 > please note to have a valid scheduled task a proper date should be passed of pattern: 2021-09-10T14:30:00
@@ -233,12 +235,13 @@ a json snippet
         "name": "Feras Alawadi",
         "content": "hello this is just a demo of Payoneer Germany Job Management System."
     },
-    "executionType": "QUEUED"
+    "executionType": "QUEUED",
+    "jobPriority": "high"
 }
 ```
 
 3. cancel a job<br/>
-   job can be canceled easily by calling the `cancelJob(id)` method.
+   job can be canceled easily by calling the `cancelJob(id)` method. check it here [cancelJon(ID id)](src/main/java/com/payoneer/JobManagement/system/Job.java#L50-L61)
 
 ```java
 jobService.cancelJob(UUID.fromString(uuid))
@@ -247,10 +250,11 @@ jobService.cancelJob(UUID.fromString(uuid))
 > please note that to have a valid operation a valid UUID must be passed.
 
 the system already have a Utils Class that have useful methods to help with this obviously<br/>
-> please see `ApiUtls` for more info
+> please see [ApiUtils](src/main/java/com/payoneer/JobManagement/api/utils/ApiUtils.java) for more info
 
-to validate the id you can call the method `ApiUtils.validUUID(uuid)` passing the id to it to check if its valid or not.
+to validate the id you can call the method [validUUID(uuid)](src/main/java/com/payoneer/JobManagement/api/utils/ApiUtils.java#L70-L76) passing the id to it to check if It''s valid or not.
 
+>  [JobExecutionType](src/main/java/com/payoneer/JobManagement/api/enums/JobExecutionType.java) and [JobPriority](src/main/java/com/payoneer/JobManagement/api/enums/JobPriority.java) are enum classes that contains at least one layer of usage (minimum). please refer to them for more info 
 ### API
 
 the schema of the API is simple and providing a generic shape that can be used to help front end programmers to perform
@@ -313,7 +317,7 @@ in conclusion: the value of `results` is changing only so the developers need to
 the url scheam is straight forward as well
 
 ```http request
- URL//api/{version}/group
+ URL/api/{version}/group
  ```
 
 for example:
