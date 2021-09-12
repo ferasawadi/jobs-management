@@ -138,7 +138,7 @@ public interface EmailRepo extends BaseJobRepo<EmailJob, UUID> {
 3. let create our first bean. to have a valid and usable objects
 
 ```java
- @Bean
+@Bean
 public JobService<EmailJob, UUID> jobService(EmailRepo emailRepo){
         return new JobService<>(emailRepo);
 }
@@ -198,7 +198,7 @@ var emailJob=new EmailJob(
         jobPriority
         );
 // execute it using:
-        jobService.createJob(emailJob,executionType,jobPriority)
+jobService.createJob(emailJob,executionType,jobPriority)
 
 ```
 
@@ -219,9 +219,9 @@ json snippet:
 }
 ``` 
 
-2. to schedule a task please use the following
-   method  [createJob(emailJob, LocalDateTime, jobPriority)](src/main/java/com/payoneer/JobManagement/system/JobService.java#L184-L221)
-   <br/> please note that the method in here is chained in the order createJob() then schedule mess with the order will
+2. to schedule a task please use the following:<br/> use the method  [createJob(emailJob, LocalDateTime)](src/main/java/com/payoneer/JobManagement/system/JobService.java#L149-L182) to pass the object and the date of the execution<br/>
+then make sure to scedule it by calling [scheduleJob(JobExecutionType executionType, JobPriority jobPriority)](src/main/java/com/payoneer/JobManagement/system/JobService.java#L184-L221)
+> please note that the method in here is chained in the order createJob() then schedule mess with the order will
    lead the system to fail and throw error
 
 ```java
@@ -237,7 +237,7 @@ json snippet:
          jobPriority
          );
 // execute it
-         jobService.createJob(emailJob,scheduleTaskReq.getWhen(),jobPriority).scheduleJob(executionType)
+jobService.createJob(emailJob,scheduleTaskReq.getWhen(),jobPriority).scheduleJob(executionType)
 ```
 
 > please note to have a valid scheduled task a proper date should be passed of pattern: 2021-09-10T14:30:00
@@ -260,7 +260,7 @@ a json snippet
 
 3. cancel a job<br/>
    job can be canceled easily by calling the `cancelJob(id)` method. check it
-   here [cancelJon(ID id)](src/main/java/com/payoneer/JobManagement/system/Job.java#L50-L61)
+   here [cancelJob(ID id)](src/main/java/com/payoneer/JobManagement/system/JobService.java#L223-L246)
 
 ```java
 jobService.cancelJob(UUID.fromString(uuid))
